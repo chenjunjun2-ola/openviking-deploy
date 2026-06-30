@@ -5,32 +5,46 @@ OpenViking Helm chart deployment configuration for K8s.
 ## Quick Start
 
 ```bash
-# 1. Edit values.yaml - set your API keys
-vi openviking/values.yaml
+# 1. Clone this repo
+git clone git@github.com:chenjunjun2-ola/openviking-deploy.git
+cd openviking-deploy
 
-# 2. Install
-helm install openviking ./openviking
+# 2. Create your values file with actual API keys
+cat > my-values.yaml <<EOF
+openviking:
+  config:
+    server:
+      root_api_key: "sk-ov-your-own-key"
+    embedding:
+      dense:
+        api_key: "your-dashscope-api-key"
+    vlm:
+      api_key: "your-dashscope-api-key"
+EOF
 
-# 3. Check status
+# 3. Install
+helm install openviking ./openviking -f my-values.yaml
+
+# 4. Check status
 kubectl get pods -l app.kubernetes.io/name=openviking
 kubectl get svc openviking
 
-# 4. Health check
+# 5. Health check
 curl http://<EXTERNAL-IP>:1933/health
 ```
 
 ## Configuration
 
-Edit `openviking/values.yaml`:
+Edit `my-values.yaml` to override default values:
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `image.repository` | Docker image | `slp-acr-registry.cn-hangzhou.cr.aliyuncs.com/slp/volcengine-openviking` |
 | `image.tag` | Image tag | `v20260630` |
 | `service.type` | Service type | `LoadBalancer` |
-| `openviking.config.server.root_api_key` | API key for authentication | `sk-ov-changeme` |
-| `openviking.config.embedding.dense.api_key` | DashScope API key | - |
-| `openviking.config.vlm.api_key` | DashScope API key | - |
+| `openviking.config.server.root_api_key` | API key for authentication | `CHANGE_ME` |
+| `openviking.config.embedding.dense.api_key` | DashScope API key | `CHANGE_ME` |
+| `openviking.config.vlm.api_key` | DashScope API key | `CHANGE_ME` |
 
 ## MCP Integration
 
@@ -53,7 +67,7 @@ After deployment, configure your local MCP client:
 
 ```bash
 # Upgrade
-helm upgrade openviking ./openviking
+helm upgrade openviking ./openviking -f my-values.yaml
 
 # Uninstall
 helm uninstall openviking
