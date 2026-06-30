@@ -1,11 +1,38 @@
 OpenViking has been deployed!
 
+{{- if .Values.ingress.enabled }}
+
+Access via Higress gateway (NodePort):
+
+  Health:   http://<GATEWAY-IP>:{{ .Values.gateway.nodePort }}/health
+  MCP:      http://<GATEWAY-IP>:{{ .Values.gateway.nodePort }}/mcp
+  Studio:   http://<GATEWAY-IP>:{{ .Values.gateway.nodePort }}/studio
+
+{{- if .Values.ingress.host }}
+  (also accessible via http://{{ .Values.ingress.host }}{{ .Values.ingress.path }})
+{{- end }}
+
+{{- else }}
+
 Access the server via port-forward:
 
   kubectl port-forward svc/{{ include "openviking.fullname" . }} 1933:{{ .Values.service.port }} -n {{ .Release.Namespace }}
 
-Then update your ovcli.conf to point to http://localhost:1933.
-
 Check health:
 
   curl http://localhost:1933/health
+
+{{- end }}
+
+MCP client configuration:
+
+  {
+    "mcpServers": {
+      "openviking": {
+        "url": "http://<GATEWAY-IP>:{{ .Values.gateway.nodePort }}/mcp",
+        "headers": {
+          "Authorization": "Bearer sk-ov-changeme"
+        }
+      }
+    }
+  }

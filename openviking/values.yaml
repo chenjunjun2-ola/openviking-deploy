@@ -3,9 +3,33 @@ image:
   pullPolicy: IfNotPresent
   tag: "v20260630"
 
+imagePullSecrets:
+  - name: acr-registry-secret
+
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 1933
+
+ingress:
+  enabled: true
+  className: higress
+  # Leave host empty to match any host (direct IP access)
+  host: ""
+  path: /
+  pathType: Prefix
+  annotations:
+    # Higress: proxy long-running MCP requests
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "1800"
+    # Higress: support SSE for MCP streaming
+    higress.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+  tls: []
+
+# Public access IP (used in NOTES.txt)
+gateway:
+  nodePort: 31080
 
 resources:
   limits:
