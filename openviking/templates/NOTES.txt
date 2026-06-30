@@ -9,7 +9,7 @@ Access via Higress gateway (NodePort):
   Studio:   http://<GATEWAY-IP>:{{ .Values.gateway.nodePort }}/studio
 
 {{- if .Values.ingress.host }}
-  (also accessible via http://{{ .Values.ingress.host }}{{ .Values.ingress.path }})
+  (also accessible via http://{{ .Values.ingress.host }}/mcp)
 {{- end }}
 
 {{- else }}

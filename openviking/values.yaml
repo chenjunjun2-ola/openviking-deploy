@@ -15,7 +15,10 @@ ingress:
   className: higress
   # Leave host empty to match any host (direct IP access)
   host: ""
-  path: /
+  paths:
+    - /health
+    - /mcp
+    - /studio
   pathType: Prefix
   annotations:
     # Higress: proxy long-running MCP requests
