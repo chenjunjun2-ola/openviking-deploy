@@ -1,0 +1,46 @@
+image:
+  repository: slp-acr-registry.cn-hangzhou.cr.aliyuncs.com/slp/volcengine-openviking
+  pullPolicy: IfNotPresent
+  tag: "v20260630"
+
+service:
+  type: LoadBalancer
+  port: 1933
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+server:
+  host: "0.0.0.0"
+  port: 1933
+
+# OpenViking config - stored as a Secret and mounted into the container
+openviking:
+  config:
+    storage:
+      workspace: /app/.openviking/workspace
+    log:
+      level: INFO
+      output: stdout
+    server:
+      host: "0.0.0.0"
+      port: 1933
+      root_api_key: "sk-ov-changeme"  # TODO: Change this to your own API key
+    embedding:
+      dense:
+        provider: dashscope
+        api_key: "sk-ws-H.REXYYHY.yqGb.MEUCIDLTaQnoq_E0MDmEhRWSjEOTftHQtMyprVq0HK0Tj-BXAiEAn61rnUL5qvs_WWkQ-DBCbx-gHvD3_HFsPjRPVXOarg8"
+        model: text-embedding-v4
+        dimension: 1024
+      max_concurrent: 10
+    vlm:
+      provider: openai
+      api_key: "sk-ws-H.REXYYHY.yqGb.MEUCIDLTaQnoq_E0MDmEhRWSjEOTftHQtMyprVq0HK0Tj-BXAiEAn61rnUL5qvs_WWkQ-DBCbx-gHvD3_HFsPjRPVXOarg8"
+      model: deepseek-v4-flash
+      api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      max_concurrent: 64
